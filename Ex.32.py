@@ -32,8 +32,7 @@ def afegir_jugador():
         alçada.delete(0, tkinter.END)
         edat.delete(0, tkinter.END)
 
-        mensaje = tkinter.Label(window, text="Introduit")
-        mensaje.grid(row=7, columnspan=6)
+        mensaje = messagebox.showinfo(window, "Jugador afegit")
 
     except sqlite3.Error as e:
         print("Error al conectar a la base de datos:", str(e))
