@@ -1,3 +1,4 @@
+import os
 import tkinter
 import sqlite3
 
@@ -16,8 +17,11 @@ edat.grid(row=4, column=2)
 
 def afegir_jugador():
     try:
-        var_BD = sqlite3.connect("C:/Users/anaa1/PycharmProjects/M7/bd/" + "basquet.db")
+        if not os.path.exists("./bd/"):
+            os.mkdir("./bd/")
+        var_BD = sqlite3.connect("./bd/" + "basquet.db")
         cursor_BD = var_BD.cursor()
+        cursor_BD.execute("""CREATE TABLE IF NOT EXISTS jugadors(nom text, cognom text, alçada real, edat integer)""")
         cursor_BD.execute("INSERT INTO jugadors (nom, cognom, alçada, edat) VALUES (?, ?, ?, ?)",
                        (nom.get(), cognom.get(), alçada.get(), edat.get()))
 
@@ -29,11 +33,20 @@ def afegir_jugador():
         edat.delete(0, tkinter.END)
 
         mensaje = tkinter.Label(window, text="Introduit")
-        mensaje.grid(row=6, columnspan=6)
+        mensaje.grid(row=7, columnspan=6)
 
     except sqlite3.Error as e:
         print("Error al conectar a la base de datos:", str(e))
 
+
+def mostrar_dades():
+    var_BD = sqlite3.connect("./bd/" + "basquet.db")
+    cur_BD = var_BD.cursor()
+    cur_BD.execute("SELECT *, oid FROM jugadors")
+    var_dades = cur_BD.fetchall()
+    for dades in var_dades:
+        print(dades)
+    var_BD.close()
 
 label_nom = tkinter.Label(window, text="Nom: ")
 label_cognom = tkinter.Label(window, text="Cognom: ")
@@ -46,5 +59,7 @@ label_edat.grid(row=4, column=1)
 
 boton = tkinter.Button(window, text="Afegir jugador", command=afegir_jugador)
 boton.grid(row=5, columnspan=6, column=2)
+boton = tkinter.Button(window, text="Mostrar jugadors", command=mostrar_dades)
+boton.grid(row=6, columnspan=6, column=2)
 
 window.mainloop()
